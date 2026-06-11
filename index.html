@@ -10,6 +10,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             min-height: 100vh;
             background: #0a0c10;
@@ -19,6 +20,7 @@
             font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
             padding: 1rem;
         }
+
         .card {
             width: 100%;
             max-width: 400px;
@@ -27,10 +29,24 @@
             box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5), 0 2px 5px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
             padding: 2rem 1.5rem 2rem 1.5rem;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: cardSlideIn 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
         }
+
+        @keyframes cardSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         .card:hover {
             box-shadow: 0 30px 55px -12px rgba(0, 0, 0, 0.6);
         }
+
         .main-title {
             text-align: center;
             font-size: 1.85rem;
@@ -39,10 +55,24 @@
             color: #f0f3fa;
             margin-bottom: 1.8rem;
             line-height: 1.2;
+            animation: fadeInText 0.45s ease-out 0.1s both;
         }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .input-group {
             width: 100%;
         }
+
         .input-field {
             width: 100%;
             padding: 0.9rem 1rem;
@@ -56,15 +86,19 @@
             outline: none;
             transition: all 0.2s ease;
             box-sizing: border-box;
+            animation: fadeInUp 0.45s ease-out 0.2s both;
         }
+
         .input-field:focus {
             border-color: #6c7a9e;
             background: #252a35;
             box-shadow: 0 0 0 4px rgba(108, 122, 158, 0.2);
         }
+
         .input-field::placeholder {
             color: #6a6f7c;
         }
+
         .input-hint {
             margin-top: 0.65rem;
             font-size: 0.75rem;
@@ -72,7 +106,9 @@
             text-align: left;
             letter-spacing: 0.2px;
             padding-left: 0.5rem;
+            animation: fadeInUp 0.45s ease-out 0.3s both;
         }
+
         .submit-btn {
             width: 100%;
             margin-top: 1.9rem;
@@ -92,12 +128,15 @@
             justify-content: center;
             gap: 0.6rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.45s ease-out 0.4s both;
         }
+
         .submit-btn:active {
             background: #3c4355;
             transform: scale(0.97);
-            box-shadow: 0 0 0 0 rgba(0,0,0,0.1);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
         }
+
         .submit-btn.disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -105,44 +144,148 @@
             transform: none;
             box-shadow: none;
         }
+
         .spinner {
             width: 18px;
             height: 18px;
-            border: 2px solid rgba(255,255,255,0.25);
+            border: 2px solid rgba(255, 255, 255, 0.25);
             border-top: 2px solid white;
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
             display: inline-block;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .toast-msg {
+
+        .payment-container {
+            display: none;
             position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) scale(0.95);
-            background: rgba(20, 24, 32, 0.95);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 12, 16, 0.96);
             backdrop-filter: blur(12px);
-            color: #f0f3fa;
-            font-size: 0.9rem;
-            font-weight: 510;
-            padding: 0.65rem 1.4rem;
-            border-radius: 60px;
-            letter-spacing: 0.2px;
-            opacity: 0;
-            transition: opacity 0.2s ease, transform 0.2s ease;
-            pointer-events: none;
             z-index: 1000;
-            white-space: nowrap;
-            font-family: inherit;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeInBg 0.3s ease;
         }
-        .toast-msg.show {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
+
+        @keyframes fadeInBg {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .payment-card {
+            width: 90%;
+            max-width: 340px;
+            background: #1a1e28;
+            border-radius: 48px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.5);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
+            animation: scaleUp 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .payment-title {
+            font-size: 1.5rem;
+            font-weight: 640;
+            color: #f0f3fa;
+            margin-bottom: 0.5rem;
+        }
+
+        .payment-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffcd7e;
+            margin: 0.5rem 0;
+            letter-spacing: 1px;
+        }
+
+        .order-id {
+            font-size: 0.8rem;
+            color: #9aa2b5;
+            background: #0f1119;
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            margin-bottom: 1.5rem;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 0.9rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: #2c6e2c;
+            color: white;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.8rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .pay-btn:active {
+            transform: scale(0.97);
+            background: #1f551f;
+        }
+
+        .pay-btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #3a5a3a;
+            transform: none;
+        }
+
+        .close-pay {
+            margin-top: 1.2rem;
+            background: transparent;
+            border: none;
+            color: #8e95a8;
+            font-size: 0.85rem;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .payment-card {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -152,82 +295,160 @@
     <div class="input-group">
         <input type="text" class="input-field" id="gameId" placeholder="游戏ID" autocomplete="off" spellcheck="false">
         <div class="input-hint">请输入游戏名字或编号</div>
-        <button class="submit-btn" id="submitBtn">提交</button>
+        <button class="submit-btn" id="submitOrderBtn">提交订单</button>
     </div>
 </div>
-<div id="toastMsg" class="toast-msg"></div>
+
+<div id="paymentModal" class="payment-container">
+    <div class="payment-card">
+        <div class="payment-title">订单支付</div>
+        <div class="payment-amount" id="paymentAmount">¥ 7.00</div>
+        <div class="order-id" id="displayOrderId">订单: 生成中...</div>
+        <button id="confirmPayBtn" class="pay-btn">立即支付</button>
+        <button id="closePayBtn" class="close-pay">关闭</button>
+    </div>
+</div>
+
 <script>
-(function(){
-    const getElem = (id) => document.getElementById(id);
-    const inputEl = getElem('gameId');
-    const btnEl = getElem('submitBtn');
-    const toastEl = getElem('toastMsg');
-    
-    let toastTimer = null;
-    let loadingTimer = null;
-    let isProcessing = false;
-    
-    const showMessage = (text, duration = 2000) => {
-        if (toastTimer) clearTimeout(toastTimer);
-        toastEl.textContent = text;
-        toastEl.classList.remove('show');
-        void toastEl.offsetWidth;
-        toastEl.classList.add('show');
-        toastTimer = setTimeout(() => {
-            toastEl.classList.remove('show');
-        }, duration);
-    };
-    
-    const setLoading = (loading) => {
-        if (loading) {
-            isProcessing = true;
-            btnEl.classList.add('disabled');
-            btnEl.disabled = true;
-            if (!btnEl.querySelector('.spinner')) {
-                const spinner = document.createElement('span');
-                spinner.className = 'spinner';
-                btnEl.appendChild(spinner);
+    (function() {
+        const inputEl = document.getElementById('gameId');
+        const submitBtn = document.getElementById('submitOrderBtn');
+        const paymentModal = document.getElementById('paymentModal');
+        const confirmPayBtn = document.getElementById('confirmPayBtn');
+        const closePayBtn = document.getElementById('closePayBtn');
+        const displayOrderIdSpan = document.getElementById('displayOrderId');
+        const paymentAmountSpan = document.getElementById('paymentAmount');
+
+        let submitLoadingTimer = null;
+        let payLoadingTimer = null;
+        let isSubmitting = false;
+        let isPaying = false;
+
+        const generateRandomAmount = () => {
+            const cents = Math.floor(Math.random() * 3) + 11;
+            const amount = 7 + cents / 100;
+            return amount.toFixed(2);
+        };
+
+        const generateOrderId = () => {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const h = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            const sec = String(now.getSeconds()).padStart(2, '0');
+            const ms = String(now.getMilliseconds()).padStart(3, '0');
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return `XC${y}${m}${d}${h}${min}${sec}${ms}${random}`;
+        };
+
+        const setSubmitLoading = (loading) => {
+            if (loading) {
+                isSubmitting = true;
+                submitBtn.classList.add('disabled');
+                submitBtn.disabled = true;
+                if (!submitBtn.querySelector('.spinner')) {
+                    const spinner = document.createElement('span');
+                    spinner.className = 'spinner';
+                    submitBtn.appendChild(spinner);
+                }
+            } else {
+                isSubmitting = false;
+                submitBtn.classList.remove('disabled');
+                submitBtn.disabled = false;
+                const spinner = submitBtn.querySelector('.spinner');
+                if (spinner) spinner.remove();
             }
-        } else {
-            isProcessing = false;
-            btnEl.classList.remove('disabled');
-            btnEl.disabled = false;
-            const spinner = btnEl.querySelector('.spinner');
-            if (spinner) spinner.remove();
-        }
-    };
-    
-    const clearTimers = () => {
-        if (loadingTimer) {
-            clearTimeout(loadingTimer);
-            loadingTimer = null;
-        }
-    };
-    
-    const handleSubmit = () => {
-        if (isProcessing) return;
-        const gameId = inputEl.value.trim();
-        if (gameId === "") {
-            showMessage("请填写游戏ID！", 1800);
-            return;
-        }
-        clearTimers();
-        setLoading(true);
-        loadingTimer = setTimeout(() => {
-            setLoading(false);
-            showMessage("支付尚未完成，请返回并确认支付!", 3000);
-            loadingTimer = null;
-        }, 3000);
-    };
-    
-    btnEl.addEventListener('click', handleSubmit);
-    inputEl.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleSubmit();
-        }
-    });
-})();
+        };
+
+        const setPayLoading = (loading) => {
+            if (loading) {
+                isPaying = true;
+                confirmPayBtn.classList.add('disabled');
+                confirmPayBtn.disabled = true;
+                if (!confirmPayBtn.querySelector('.spinner')) {
+                    const spinner = document.createElement('span');
+                    spinner.className = 'spinner';
+                    confirmPayBtn.appendChild(spinner);
+                }
+            } else {
+                isPaying = false;
+                confirmPayBtn.classList.remove('disabled');
+                confirmPayBtn.disabled = false;
+                const spinner = confirmPayBtn.querySelector('.spinner');
+                if (spinner) spinner.remove();
+            }
+        };
+
+        const closePayment = () => {
+            if (isPaying) return;
+            paymentModal.style.display = 'none';
+            displayOrderIdSpan.textContent = '订单: 生成中...';
+            if (payLoadingTimer) {
+                clearTimeout(payLoadingTimer);
+                payLoadingTimer = null;
+            }
+            setPayLoading(false);
+        };
+
+        const handleSubmitOrder = () => {
+            if (isSubmitting) return;
+            const gameId = inputEl.value.trim();
+            if (gameId === "") {
+                inputEl.style.transform = 'translateX(0)';
+                inputEl.style.transition = 'transform 0.1s';
+                inputEl.style.transform = 'translateX(4px)';
+                setTimeout(() => {
+                    if (inputEl) inputEl.style.transform = '';
+                }, 120);
+                return;
+            }
+
+            setSubmitLoading(true);
+            if (submitLoadingTimer) clearTimeout(submitLoadingTimer);
+            
+            submitLoadingTimer = setTimeout(() => {
+                const newOrderId = generateOrderId();
+                const randomAmount = generateRandomAmount();
+                displayOrderIdSpan.textContent = `订单: ${newOrderId}`;
+                paymentAmountSpan.textContent = `¥ ${randomAmount}`;
+                setSubmitLoading(false);
+                paymentModal.style.display = 'flex';
+                submitLoadingTimer = null;
+            }, 3000);
+        };
+
+        const handlePay = () => {
+            if (isPaying) return;
+            const delay = Math.floor(Math.random() * (10000 - 7000 + 1) + 7000);
+            setPayLoading(true);
+            
+            if (payLoadingTimer) clearTimeout(payLoadingTimer);
+            payLoadingTimer = setTimeout(() => {
+                setPayLoading(false);
+                window.location.href = "about:blank";
+                payLoadingTimer = null;
+            }, delay);
+        };
+
+        submitBtn.addEventListener('click', handleSubmitOrder);
+        confirmPayBtn.addEventListener('click', handlePay);
+        closePayBtn.addEventListener('click', closePayment);
+        
+        paymentModal.addEventListener('click', (e) => {
+            if (e.target === paymentModal && !isPaying) {
+                closePayment();
+            }
+        });
+
+        inputEl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSubmitOrder();
+            }
+        });
+    })();
 </script>
 </body>
-</超文本标记语言>
+</html>
