@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>西卡自动发货</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            background: #0a0c10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 1rem;
+        }
+        .card {
+            width: 100%;
+            max-width: 400px;
+            background: #13161c;
+            border-radius: 40px;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5), 0 2px 5px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            padding: 2rem 1.5rem 2rem 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            box-shadow: 0 30px 55px -12px rgba(0, 0, 0, 0.6);
+        }
+        .main-title {
+            text-align: center;
+            font-size: 1.85rem;
+            font-weight: 640;
+            letter-spacing: -0.3px;
+            color: #f0f3fa;
+            margin-bottom: 1.8rem;
+            line-height: 1.2;
+        }
+        .input-group {
+            width: 100%;
+        }
+        .input-field {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            font-size: 1rem;
+            font-weight: 400;
+            font-family: inherit;
+            color: #eef2ff;
+            background: #1e222b;
+            border: 1.5px solid #2a2f3a;
+            border-radius: 28px;
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        .input-field:focus {
+            border-color: #6c7a9e;
+            background: #252a35;
+            box-shadow: 0 0 0 4px rgba(108, 122, 158, 0.2);
+        }
+        .input-field::placeholder {
+            color: #6a6f7c;
+        }
+        .input-hint {
+            margin-top: 0.65rem;
+            font-size: 0.75rem;
+            color: #9aa2b5;
+            text-align: left;
+            letter-spacing: 0.2px;
+            padding-left: 0.5rem;
+        }
+        .submit-btn {
+            width: 100%;
+            margin-top: 1.9rem;
+            padding: 0.9rem 1rem;
+            font-size: 1rem;
+            font-weight: 590;
+            font-family: inherit;
+            color: white;
+            background: #2c313e;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .submit-btn:active {
+            background: #3c4355;
+            transform: scale(0.97);
+            box-shadow: 0 0 0 0 rgba(0,0,0,0.1);
+        }
+        .submit-btn.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #232732;
+            transform: none;
+            box-shadow: none;
+        }
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.25);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .toast-msg {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            background: rgba(20, 24, 32, 0.95);
+            backdrop-filter: blur(12px);
+            color: #f0f3fa;
+            font-size: 0.9rem;
+            font-weight: 510;
+            padding: 0.65rem 1.4rem;
+            border-radius: 60px;
+            letter-spacing: 0.2px;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            font-family: inherit;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        .toast-msg.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="main-title">西卡自动发货</div>
+    <div class="input-group">
+        <input type="text" class="input-field" id="gameId" placeholder="游戏ID" autocomplete="off" spellcheck="false">
+        <div class="input-hint">请输入游戏名字或编号</div>
+        <button class="submit-btn" id="submitBtn">提交</button>
+    </div>
+</div>
+<div id="toastMsg" class="toast-msg"></div>
+<script>
+(function(){
+    const getElem = (id) => document.getElementById(id);
+    const inputEl = getElem('gameId');
+    const btnEl = getElem('submitBtn');
+    const toastEl = getElem('toastMsg');
+    
+    let toastTimer = null;
+    let loadingTimer = null;
+    let isProcessing = false;
+    
+    const showMessage = (text, duration = 2000) => {
+        if (toastTimer) clearTimeout(toastTimer);
+        toastEl.textContent = text;
+        toastEl.classList.remove('show');
+        void toastEl.offsetWidth;
+        toastEl.classList.add('show');
+        toastTimer = setTimeout(() => {
+            toastEl.classList.remove('show');
+        }, duration);
+    };
+    
+    const setLoading = (loading) => {
+        if (loading) {
+            isProcessing = true;
+            btnEl.classList.add('disabled');
+            btnEl.disabled = true;
+            if (!btnEl.querySelector('.spinner')) {
+                const spinner = document.createElement('span');
+                spinner.className = 'spinner';
+                btnEl.appendChild(spinner);
+            }
+        } else {
+            isProcessing = false;
+            btnEl.classList.remove('disabled');
+            btnEl.disabled = false;
+            const spinner = btnEl.querySelector('.spinner');
+            if (spinner) spinner.remove();
+        }
+    };
+    
+    const clearTimers = () => {
+        if (loadingTimer) {
+            clearTimeout(loadingTimer);
+            loadingTimer = null;
+        }
+    };
+    
+    const handleSubmit = () => {
+        if (isProcessing) return;
+        const gameId = inputEl.value.trim();
+        if (gameId === "") {
+            showMessage("请填写游戏ID！", 1800);
+            return;
+        }
+        clearTimers();
+        setLoading(true);
+        loadingTimer = setTimeout(() => {
+            setLoading(false);
+            showMessage("未付款，请重试！", 2000);
+            loadingTimer = null;
+        }, 3000);
+    };
+    
+    btnEl.addEventListener('click', handleSubmit);
+    inputEl.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+    });
+})();
+</script>
+</body>
+</html>
