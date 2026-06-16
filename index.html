@@ -28,7 +28,6 @@
             border-radius: 40px;
             box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5), 0 2px 5px -2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
             padding: 2rem 1.5rem 2rem 1.5rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
             animation: cardSlideIn 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
         }
 
@@ -43,18 +42,12 @@
             }
         }
 
-        .card:hover {
-            box-shadow: 0 30px 55px -12px rgba(0, 0, 0, 0.6);
-        }
-
         .main-title {
             text-align: center;
             font-size: 1.85rem;
             font-weight: 640;
-            letter-spacing: -0.3px;
             color: #f0f3fa;
             margin-bottom: 1.8rem;
-            line-height: 1.2;
             animation: fadeInText 0.45s ease-out 0.1s both;
         }
 
@@ -78,7 +71,6 @@
             padding: 0.9rem 1rem;
             font-size: 1rem;
             font-weight: 400;
-            font-family: inherit;
             color: #eef2ff;
             background: #1e222b;
             border: 1.5px solid #2a2f3a;
@@ -104,7 +96,6 @@
             font-size: 0.75rem;
             color: #9aa2b5;
             text-align: left;
-            letter-spacing: 0.2px;
             padding-left: 0.5rem;
             animation: fadeInUp 0.45s ease-out 0.3s both;
         }
@@ -115,14 +106,12 @@
             padding: 0.9rem 1rem;
             font-size: 1rem;
             font-weight: 590;
-            font-family: inherit;
             color: white;
             background: #2c313e;
             border: none;
             border-radius: 40px;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -134,7 +123,6 @@
         .submit-btn:active {
             background: #3c4355;
             transform: scale(0.97);
-            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
         }
 
         .submit-btn.disabled {
@@ -142,7 +130,6 @@
             cursor: not-allowed;
             background: #232732;
             transform: none;
-            box-shadow: none;
         }
 
         .spinner {
@@ -160,20 +147,68 @@
             100% { transform: rotate(360deg); }
         }
 
-        .payment-container {
+        /* Toast 消息提示 (非模态) */
+        .toast-msg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(0, 0, 0, 0.88);
+            backdrop-filter: blur(16px);
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+            z-index: 1500;
+            white-space: nowrap;
+            font-family: inherit;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toast-msg.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            animation: toastPop 0.3s ease-out forwards;
+        }
+
+        @keyframes toastPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0.92);
+                opacity: 0;
+            }
+            60% {
+                transform: translate(-50%, -50%) scale(1.04);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* 成功弹窗 (新窗口/模态) */
+        .success-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 12, 16, 0.96);
-            backdrop-filter: blur(12px);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
             animation: fadeInBg 0.3s ease;
+        }
+
+        .success-modal.show {
+            display: flex;
         }
 
         @keyframes fadeInBg {
@@ -181,16 +216,16 @@
             to { opacity: 1; }
         }
 
-        .payment-card {
+        .success-card {
             width: 90%;
-            max-width: 340px;
+            max-width: 360px;
             background: #1a1e28;
             border-radius: 48px;
             padding: 2rem 1.5rem;
             text-align: center;
-            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.6);
             border: 0.5px solid rgba(255, 255, 255, 0.08);
-            animation: scaleUp 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+            animation: scaleUp 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.2);
         }
 
         @keyframes scaleUp {
@@ -204,71 +239,82 @@
             }
         }
 
-        .payment-title {
-            font-size: 1.5rem;
-            font-weight: 640;
-            color: #f0f3fa;
-            margin-bottom: 0.5rem;
+        .success-icon {
+            font-size: 3.2rem;
+            margin-bottom: 0.2rem;
         }
 
-        .payment-amount {
-            font-size: 2rem;
+        .success-title {
+            font-size: 1.6rem;
             font-weight: 700;
-            color: #ffcd7e;
-            margin: 0.5rem 0;
-            letter-spacing: 1px;
+            color: #4caf50;
+            margin-bottom: 0.8rem;
         }
 
-        .order-id {
-            font-size: 0.8rem;
-            color: #9aa2b5;
+        .cdk-box-modal {
             background: #0f1119;
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 40px;
-            margin-bottom: 1.5rem;
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid #3a4050;
         }
 
-        .pay-btn {
-            width: 100%;
-            padding: 0.9rem;
+        .cdk-label-modal {
+            font-size: 0.7rem;
+            color: #9aa2b5;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+
+        .cdk-value-modal {
             font-size: 1rem;
             font-weight: 600;
-            background: #2c6e2c;
+            color: #ffcd7e;
+            letter-spacing: 1px;
+            word-break: break-all;
+            font-family: 'Monaco', 'Menlo', monospace;
+        }
+
+        .tutorial-link-modal {
+            display: inline-block;
+            color: #6c7a9e;
+            font-size: 0.8rem;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            background: #0f1119;
+            border: 1px solid #2a2f3a;
+            margin-top: 0.2rem;
+            transition: all 0.2s;
+            word-break: break-all;
+        }
+
+        .tutorial-link-modal:active {
+            background: #1a1e28;
+            transform: scale(0.97);
+        }
+
+        .tutorial-link-modal span {
+            color: #8aa3d9;
+        }
+
+        .close-modal-btn {
+            width: 100%;
+            margin-top: 1.2rem;
+            padding: 0.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: #2c313e;
             color: white;
             border: none;
             border-radius: 60px;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 0.8rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
         }
 
-        .pay-btn:active {
+        .close-modal-btn:active {
+            background: #3c4355;
             transform: scale(0.97);
-            background: #1f551f;
-        }
-
-        .pay-btn.disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background: #3a5a3a;
-            transform: none;
-        }
-
-        .close-pay {
-            margin-top: 1.2rem;
-            background: transparent;
-            border: none;
-            color: #8e95a8;
-            font-size: 0.85rem;
-            text-decoration: underline;
-            cursor: pointer;
-            padding: 0.5rem;
         }
 
         @keyframes fadeInUp {
@@ -283,8 +329,21 @@
         }
 
         @media (max-width: 480px) {
-            .payment-card {
+            .card {
+                padding: 1.6rem 1.2rem;
+            }
+            .cdk-value-modal {
+                font-size: 0.85rem;
+            }
+            .success-card {
                 padding: 1.5rem;
+            }
+            .toast-msg {
+                font-size: 1rem;
+                padding: 0.8rem 1.5rem;
+                white-space: normal;
+                max-width: 80%;
+                text-align: center;
             }
         }
     </style>
@@ -293,66 +352,94 @@
 <div class="card">
     <div class="main-title">西卡自动发货</div>
     <div class="input-group">
-        <input type="text" class="input-field" id="gameId" placeholder="游戏ID" autocomplete="off" spellcheck="false">
-        <div class="input-hint">请输入游戏名字或编号</div>
-        <button class="submit-btn" id="submitOrderBtn">提交订单</button>
+        <input type="text" class="input-field" id="gameId" placeholder="请输入ID或编号" autocomplete="off" spellcheck="false">
+        <div class="input-hint">请输入ID或编号</div>
+        <button class="submit-btn" id="submitBtn">提交</button>
     </div>
 </div>
 
-<div id="paymentModal" class="payment-container">
-    <div class="payment-card">
-        <div class="payment-title">订单支付</div>
-        <div class="payment-amount" id="paymentAmount">¥ 7.00</div>
-        <div class="order-id" id="displayOrderId">订单: 生成中...</div>
-        <button id="confirmPayBtn" class="pay-btn">立即支付</button>
-        <button id="closePayBtn" class="close-pay">关闭</button>
+<!-- Toast 消息浮层 (居中，非模态) -->
+<div id="toastMsg" class="toast-msg">检测付款状态中...</div>
+
+<!-- 付款成功弹窗 (模态) -->
+<div class="success-modal" id="successModal">
+    <div class="success-card">
+        <div class="success-icon">✅</div>
+        <div class="success-title">付款成功</div>
+        <div class="cdk-box-modal">
+            <div class="cdk-label-modal">🎮 您的CDK</div>
+            <div class="cdk-value-modal" id="cdkValueModal">---- ---- ---- ----</div>
+        </div>
+        <a class="tutorial-link-modal" id="tutorialLinkModal" href="#" target="_blank">
+            📖 使用教程：<span id="tutorialUrlModal">https://drive.uc.cn/s/5dacd75a7fe34</span>
+        </a>
+        <button class="close-modal-btn" id="closeModalBtn">知道了</button>
     </div>
 </div>
 
 <script>
     (function() {
         const inputEl = document.getElementById('gameId');
-        const submitBtn = document.getElementById('submitOrderBtn');
-        const paymentModal = document.getElementById('paymentModal');
-        const confirmPayBtn = document.getElementById('confirmPayBtn');
-        const closePayBtn = document.getElementById('closePayBtn');
-        const displayOrderIdSpan = document.getElementById('displayOrderId');
-        const paymentAmountSpan = document.getElementById('paymentAmount');
+        const submitBtn = document.getElementById('submitBtn');
+        const toastEl = document.getElementById('toastMsg');
+        const successModal = document.getElementById('successModal');
+        const cdkValueModal = document.getElementById('cdkValueModal');
+        const tutorialLinkModal = document.getElementById('tutorialLinkModal');
+        const tutorialUrlModal = document.getElementById('tutorialUrlModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
 
-        let submitLoadingTimer = null;
-        let payLoadingTimer = null;
+        let loadingTimer = null;
+        let toastTimer = null;
         let isSubmitting = false;
-        let isPaying = false;
 
-        const generateRandomAmount = () => {
-            const cents = Math.floor(Math.random() * 3) + 11;
-            const amount = 7 + cents / 100;
-            return amount.toFixed(2);
-        };
+        const TUTORIAL_URL = "https://drive.uc.cn/s/5dacd75a7fe34";
 
-        const generateOrderId = () => {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            const h = String(now.getHours()).padStart(2, '0');
-            const min = String(now.getMinutes()).padStart(2, '0');
-            const sec = String(now.getSeconds()).padStart(2, '0');
-            const ms = String(now.getMilliseconds()).padStart(3, '0');
-            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            return `XC${y}${m}${d}${h}${min}${sec}${ms}${random}`;
-        };
+        // 生成CDK: 4组*4位 (排除易混淆字符)
+        function generateCDK() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let segments = [];
+            for (let i = 0; i < 4; i++) {
+                let seg = '';
+                for (let j = 0; j < 4; j++) {
+                    seg += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                segments.push(seg);
+            }
+            return segments.join('-');
+        }
 
-        const setSubmitLoading = (loading) => {
+        // 显示Toast消息 (居中，可自动消失)
+        function showToast(text, duration = 3000) {
+            if (toastTimer) clearTimeout(toastTimer);
+            toastEl.textContent = text;
+            toastEl.classList.remove('show');
+            void toastEl.offsetWidth;
+            toastEl.classList.add('show');
+            toastTimer = setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, duration);
+        }
+
+        // 隐藏Toast (立即)
+        function hideToast() {
+            if (toastTimer) {
+                clearTimeout(toastTimer);
+                toastTimer = null;
+            }
+            toastEl.classList.remove('show');
+        }
+
+        // 设置按钮加载状态
+        function setLoading(loading) {
             if (loading) {
                 isSubmitting = true;
                 submitBtn.classList.add('disabled');
                 submitBtn.disabled = true;
-                if (!submitBtn.querySelector('.spinner')) {
-                    const spinner = document.createElement('span');
-                    spinner.className = 'spinner';
-                    submitBtn.appendChild(spinner);
-                }
+                const oldSpinner = submitBtn.querySelector('.spinner');
+                if (oldSpinner) oldSpinner.remove();
+                const spinner = document.createElement('span');
+                spinner.className = 'spinner';
+                submitBtn.appendChild(spinner);
             } else {
                 isSubmitting = false;
                 submitBtn.classList.remove('disabled');
@@ -360,42 +447,27 @@
                 const spinner = submitBtn.querySelector('.spinner');
                 if (spinner) spinner.remove();
             }
-        };
+        }
 
-        const setPayLoading = (loading) => {
-            if (loading) {
-                isPaying = true;
-                confirmPayBtn.classList.add('disabled');
-                confirmPayBtn.disabled = true;
-                if (!confirmPayBtn.querySelector('.spinner')) {
-                    const spinner = document.createElement('span');
-                    spinner.className = 'spinner';
-                    confirmPayBtn.appendChild(spinner);
-                }
-            } else {
-                isPaying = false;
-                confirmPayBtn.classList.remove('disabled');
-                confirmPayBtn.disabled = false;
-                const spinner = confirmPayBtn.querySelector('.spinner');
-                if (spinner) spinner.remove();
-            }
-        };
+        // 显示成功弹窗 (模态)
+        function showSuccessModal(cdk) {
+            cdkValueModal.textContent = cdk || '---- ---- ---- ----';
+            tutorialLinkModal.href = TUTORIAL_URL;
+            tutorialUrlModal.textContent = TUTORIAL_URL;
+            successModal.classList.add('show');
+        }
 
-        const closePayment = () => {
-            if (isPaying) return;
-            paymentModal.style.display = 'none';
-            displayOrderIdSpan.textContent = '订单: 生成中...';
-            if (payLoadingTimer) {
-                clearTimeout(payLoadingTimer);
-                payLoadingTimer = null;
-            }
-            setPayLoading(false);
-        };
+        // 关闭成功弹窗
+        function closeSuccessModal() {
+            successModal.classList.remove('show');
+        }
 
-        const handleSubmitOrder = () => {
+        // 主流程
+        function handleSubmit() {
             if (isSubmitting) return;
-            const gameId = inputEl.value.trim();
-            if (gameId === "") {
+            const idValue = inputEl.value.trim();
+            if (idValue === "") {
+                // 输入框抖动反馈
                 inputEl.style.transform = 'translateX(0)';
                 inputEl.style.transition = 'transform 0.1s';
                 inputEl.style.transform = 'translateX(4px)';
@@ -405,49 +477,46 @@
                 return;
             }
 
-            setSubmitLoading(true);
-            if (submitLoadingTimer) clearTimeout(submitLoadingTimer);
-            
-            submitLoadingTimer = setTimeout(() => {
-                const newOrderId = generateOrderId();
-                const randomAmount = generateRandomAmount();
-                displayOrderIdSpan.textContent = `订单: ${newOrderId}`;
-                paymentAmountSpan.textContent = `¥ ${randomAmount}`;
-                setSubmitLoading(false);
-                paymentModal.style.display = 'flex';
-                submitLoadingTimer = null;
-            }, 3000);
-        };
+            // 1. 开始加载
+            setLoading(true);
+            // 2. 显示Toast: "检测付款状态中..."
+            showToast("检测付款状态中...", 4000);
 
-        const handlePay = () => {
-            if (isPaying) return;
-            const delay = Math.floor(Math.random() * (10000 - 7000 + 1) + 7000);
-            setPayLoading(true);
-            
-            if (payLoadingTimer) clearTimeout(payLoadingTimer);
-            payLoadingTimer = setTimeout(() => {
-                setPayLoading(false);
-                window.location.href = "about:blank";
-                payLoadingTimer = null;
-            }, delay);
-        };
+            // 3. 4秒后切换为"付款成功"，并弹出模态窗
+            if (loadingTimer) clearTimeout(loadingTimer);
+            loadingTimer = setTimeout(() => {
+                // 隐藏加载状态
+                setLoading(false);
+                // 隐藏当前toast（"检测付款状态中..."）
+                hideToast();
+                // 生成CDK
+                const newCdk = generateCDK();
+                // 显示成功弹窗（模态）
+                showSuccessModal(newCdk);
+                loadingTimer = null;
+            }, 4000);
+        }
 
-        submitBtn.addEventListener('click', handleSubmitOrder);
-        confirmPayBtn.addEventListener('click', handlePay);
-        closePayBtn.addEventListener('click', closePayment);
-        
-        paymentModal.addEventListener('click', (e) => {
-            if (e.target === paymentModal && !isPaying) {
-                closePayment();
-            }
-        });
-
+        // 事件绑定
+        submitBtn.addEventListener('click', handleSubmit);
         inputEl.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                handleSubmitOrder();
+                handleSubmit();
             }
         });
+
+        closeModalBtn.addEventListener('click', closeSuccessModal);
+        // 点击模态背景关闭（增强体验）
+        successModal.addEventListener('click', (e) => {
+            if (e.target === successModal) {
+                closeSuccessModal();
+            }
+        });
+
+        // 预设教程链接
+        tutorialLinkModal.href = TUTORIAL_URL;
+        tutorialUrlModal.textContent = TUTORIAL_URL;
     })();
 </script>
 </body>
